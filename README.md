@@ -194,21 +194,20 @@ projects/pipeline_20260614_120000/
 
 ## 架构
 
-### 系统全景图
+### 四层 Agent Harness（对标 Claude Code 架构）
 
-![系统架构全景图](docs/images/system_architecture.png)
+OpenResume 严格对标 Claude Code 的四层架构，每一层职责清晰、互不耦合。绿色竖线 = 已完成，橙色竖线 = 未完成。
 
-### 三层 Agent Harness（类 Claude Code 架构）
+![四层 Agent Harness 架构](docs/images/four_layer_architecture.png)
 
-这是 OpenResume 最核心的设计——不是 prompt 拼凑，而是三层逐步加强的约束模型。
+**各层职责**：
 
-![三层 Agent Harness](docs/images/three_layer_harness.png)
-
-### Query Loop 内部细节
-
-这是 Agent 运行时每一轮的真实执行路径——对应 Claude Code 的 `query.ts`。
-
-![Query Loop 运行时细节](docs/images/query_loop_detail.png)
+| 层 | 职责 | Claude Code 对应 | OpenResume 实现 |
+|---|---|---|---|
+| **引擎层** | 中枢调度·不含业务逻辑 | QueryEngine · query 循环 · 工具编排 · 对话生命周期 | `query_engine.py` · `query_loop.py` · `pipeline.py` |
+| **工具层** | Agent 全部能力 | 文件操作 · 搜索 · 执行 · 模式控制 · 任务管理 | 30+ 工具 · 12 Provider · 权限过滤 · schema 输出 |
+| **服务层** | 共享基础设施 | API 调用 · 上下文压缩 · 记忆 · MCP 通信 | LLM API · Memory · ⚠️ 缺上下文压缩 · ⚠️ 缺 MCP 动态注入 |
+| **安全与治理层** | 横切关注点 | 权限检查 · Hooks · Bash 安全 | PermissionPolicy · Post-tool Hooks · ⚠️ 缺 Bash 沙箱 |
 
 **和 ChatGPT/Claude 直接改简历的区别**：
 
