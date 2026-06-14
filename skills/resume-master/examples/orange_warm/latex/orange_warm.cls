@@ -16,6 +16,7 @@
 \RequirePackage{enumitem}
 \RequirePackage[hidelinks]{hyperref}
 \RequirePackage{ifthen}
+\RequirePackage{amssymb}
 \RequirePackage{etoolbox}
 
 \definecolor{t5topbar}{HTML}{D45B1A}
