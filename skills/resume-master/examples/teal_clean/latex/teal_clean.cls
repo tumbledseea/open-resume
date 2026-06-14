@@ -16,6 +16,7 @@
 \RequirePackage{enumitem}
 \RequirePackage[hidelinks]{hyperref}
 \RequirePackage{ifthen}
+\RequirePackage{amssymb}
 \RequirePackage{etoolbox}
 
 %% ── Palette ─────────────────────────────────────────────────────────

@@ -1,8 +1,8 @@
-\T3SectionTitle{ {{ module.title }} }
+\SectionTitle{ {{ module.title }} }
 \begin{T3Card}
 {% for item in module["items"] %}
-\T3EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
-{% if item.role %}\T3EntrySubheader{ {{ item.role }} }{}{% endif %}
+\EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
+{% if item.role %}\EntrySubheader{ {{ item.role }} }{}{% endif %}
 {% if item.bullets %}
 \begin{itemize}
 {% for bullet in item.bullets %}

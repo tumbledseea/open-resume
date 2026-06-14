@@ -7,6 +7,7 @@ Each phase calls the relevant tool handler directly (no LLM tool-call loop).
 from __future__ import annotations
 
 import json
+import shutil
 import time
 from dataclasses import dataclass, field
 from enum import Enum
@@ -76,6 +77,7 @@ class PipelineInput:
     enable_boss: bool = False
     auto_select_job: bool = False
     template_id: str = ""
+    photo_file: str = ""
 
 
 @dataclass
@@ -214,6 +216,25 @@ class ResumePipeline:
         ))
         if phase.status == PhaseStatus.FAILED:
             return self._finalize(result, "failed")
+
+        # ── inject photo if provided ────────────────────────────────────────
+        if pipeline_input.photo_file:
+            try:
+                photo_path = Path(pipeline_input.photo_file).resolve()
+                if photo_path.is_file():
+                    latex_dir = project_dir / "latex"
+                    latex_dir.mkdir(parents=True, exist_ok=True)
+                    dst = latex_dir / "photo.png"
+                    shutil.copy2(photo_path, dst)
+                    # Update resume_modules.json with photo filename
+                    modules_path = latex_dir / "resume_modules.json"
+                    modules = json.loads(modules_path.read_text(encoding="utf-8"))
+                    modules.setdefault("header", {})["photo"] = "photo.png"
+                    modules_path.write_text(json.dumps(modules, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                else:
+                    result.warnings.append(f"photo file not found: {pipeline_input.photo_file}")
+            except Exception as exc:
+                result.warnings.append(f"photo injection failed: {exc}")
 
         # ── Phase 7: render_latex ───────────────────────────────────────────
         render_input: dict[str, Any] = {"project_dir": str(project_dir)}

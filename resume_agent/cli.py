@@ -248,6 +248,7 @@ def cmd_pipeline(args: argparse.Namespace) -> int:
         enable_boss=args.enable_boss,
         auto_select_job=args.auto_select,
         template_id=args.template or "",
+        photo_file=args.photo or "",
     )
 
     pipeline = ResumePipeline(repo_root=REPO_ROOT)
@@ -326,6 +327,7 @@ def build_parser() -> argparse.ArgumentParser:
     pipe.add_argument("--min-match-score", type=int, default=75, help="Minimum match score threshold (default 75)")
     pipe.add_argument("--enable-boss", action="store_true", help="Enable BOSS 直聘 API (requires BOSS_COOKIES)")
     pipe.add_argument("--auto-select", action="store_true", help="Auto-select top search result without asking user")
+    pipe.add_argument("--photo", help="Path to profile photo (PNG/JPG), copied into the resume header")
     pipe.add_argument("--template", help="Template id to render (e.g. red_card, navy_sidebar, teal_clean). Overrides resume_modules.json.")
     pipe.set_defaults(func=cmd_pipeline)
 
