@@ -1,8 +1,8 @@
-${CMD}SectionTitle{ {{ module.title }} }
+\SectionTitle{ {{ module.title }} }
 \begin{T6Card}
 {% for item in module["items"] %}
-${CMD}EntryHeader{ {{ item.organization }} }{ {{ item.time }} }
-${CMD}EntrySubheader{ {{ item.role }} }{ {{ item.project | default("") }} }
+\EntryHeader{ {{ item.organization }} }{ {{ item.time }} }
+\EntrySubheader{ {{ item.role }} }{ {{ item.project | default("") }} }
 {% if item.bullets %}
 \begin{itemize}
 {% for bullet in item.bullets %}

@@ -4,6 +4,7 @@ import json
 from dataclasses import dataclass, field
 from typing import Any, Mapping
 
+from resume_agent.context.compressor import compress_tool_result
 from resume_agent.engine.hooks import run_post_tool_hooks
 from resume_agent.engine.trace import TraceLogger
 from resume_agent.model.openai_client import ChatModelClient, ModelResponse
@@ -82,7 +83,7 @@ def run_agent_loop(
                 trace=trace,
                 tool_call_id=call.id,
             )
-            tool_content = _tool_content(tool_result)
+            tool_content = _tool_content(tool_result, tool_name=call.name)
             active_messages.append(
                 {
                     "role": "tool",
@@ -160,8 +161,9 @@ def _assistant_message(response: ModelResponse) -> dict[str, Any]:
     return message
 
 
-def _tool_content(result: ToolResult) -> str:
+def _tool_content(result: ToolResult, tool_name: str = "") -> str:
+    compressed = compress_tool_result(result.content, name=tool_name)
     try:
-        return json.dumps(result.content, ensure_ascii=False)
+        return json.dumps(compressed, ensure_ascii=False)
     except TypeError:
-        return str(result.content)
+        return str(compressed)

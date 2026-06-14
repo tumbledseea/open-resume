@@ -29,7 +29,7 @@
 }
 
 %% Header: name centre, contact line below
-\newcommand{\T4Header}[2]{%
+\newcommand{\Header}[2]{%
   \begin{center}
     {\fontsize{24}{28}\selectfont\bfseries\color{t4text}#1}\par
     \vspace{0.3em}
@@ -41,24 +41,24 @@
 }
 
 %% Section title: all-caps, underlined
-\newcommand{\T4SectionTitle}[1]{%
+\newcommand{\SectionTitle}[1]{%
   \vspace{0.3em}
   \noindent{\normalsize\bfseries\color{t4text}\MakeUppercase{#1}}\par
   \noindent\textcolor{t4rule}{\rule{\textwidth}{0.4pt}}\par
   \vspace{0.08em}
 }
 
-\newcommand{\T4EntryHeader}[2]{%
+\newcommand{\EntryHeader}[2]{%
   \noindent\textbf{\color{t4text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t4muted}#2}}%
   \par
 }
-\newcommand{\T4EntrySubheader}[2]{%
+\newcommand{\EntrySubheader}[2]{%
   \noindent{\small\itshape\color{t4muted}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t4muted}#2}}%
   \par
 }
-\newcommand{\T4AwardEntry}[2]{%
+\newcommand{\AwardEntry}[2]{%
   \noindent{\color{t4text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t4muted}#2}}%
   \par\vspace{0.06em}

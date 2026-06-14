@@ -1,8 +1,8 @@
-${CMD}SectionTitle{ {{ module.title }} }
+\SectionTitle{ {{ module.title }} }
 \begin{T6Card}
 {% for item in module["items"] %}
-${CMD}EntryHeader{ {{ item.school }}{% for badge in item.badges %}${CMD}Badge{ {{ badge }} }{% endfor %} }{ {{ item.time }} }
-${CMD}EntrySubheader{ {{ item.major }} \quad {{ item.degree }}{% if item.college %} \quad {{ item.college }}{% endif %}{% if item.study_type %} \quad {{ item.study_type }}{% endif %} }{ {{ item.location | default("") }} }
+\EntryHeader{ {{ item.school }}{% for badge in item.badges %}\Badge{ {{ badge }} }{% endfor %} }{ {{ item.time }} }
+\EntrySubheader{ {{ item.major }} \quad {{ item.degree }}{% if item.college %} \quad {{ item.college }}{% endif %}{% if item.study_type %} \quad {{ item.study_type }}{% endif %} }{ {{ item.location | default("") }} }
 {% if item.details %}
 \begin{itemize}
 {% for detail in item.details %}

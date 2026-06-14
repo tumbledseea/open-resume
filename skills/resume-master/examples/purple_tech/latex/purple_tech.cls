@@ -46,7 +46,7 @@
   \end{tikzpicture}%
 }
 
-\newcommand{\T8Header}[3]{%
+\newcommand{\Header}[3]{%
   \vspace*{0.45cm}
   \noindent
   \begin{minipage}[t]{0.76\textwidth}
@@ -69,7 +69,7 @@
   \vspace{0.12em}
 }
 
-\newcommand{\T8SectionTitle}[1]{%
+\newcommand{\SectionTitle}[1]{%
   \vspace{0.22em}
   \noindent
   \begin{tikzpicture}[baseline=-0.55ex]
@@ -87,7 +87,7 @@
   before skip=0.1em, after skip=0.28em
 }
 
-\newcommand{\T8Badge}[1]{%
+\newcommand{\Badge}[1]{%
   \hspace{0.25em}{\tikz[baseline=-0.45ex]\node[
     fill=t8badge, draw=t8rule, rounded corners=1.5pt,
     inner xsep=3pt, inner ysep=0.8pt,
@@ -95,15 +95,15 @@
   ]{#1};}%
 }
 
-\newcommand{\T8EntryHeader}[2]{%
+\newcommand{\EntryHeader}[2]{%
   \noindent\textbf{\color{t8text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t8accent}#2}}\par
 }
-\newcommand{\T8EntrySubheader}[2]{%
+\newcommand{\EntrySubheader}[2]{%
   \noindent{\small\color{t8muted}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t8muted}#2}}\par
 }
-\newcommand{\T8AwardEntry}[2]{%
+\newcommand{\AwardEntry}[2]{%
   \noindent{\color{t8text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t8muted}#2}}%
   \par\vspace{0.07em}

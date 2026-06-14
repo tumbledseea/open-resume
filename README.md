@@ -14,6 +14,10 @@
 
 <br>
 
+![任务背景](docs/images/task_background.png)
+
+<br>
+
 **背景**。投简历这件事，每个人都要经历，而同一个候选人，投不同公司、不同岗位，简历应该是不同的。对应的HR看简历的时候看重的能力不一样、侧重的项目经历也应该不一样。但人工针对每个 JD 改写简历，一份就要半小时，所以海投根本不现实。结果是：千篇一律的通用简历 → 已读不回 → 继续海投 → 恶性循环。
 
 **简历优化首先要搞清楚岗位到底要什么**。最理想的输入不是你自己猜的关键词，而是公司官网上的真实岗位描述。JD 里面藏着这个岗位真正的技术栈要求、业务背景、以及 HR 筛选时的硬性关键词——这些信息靠猜是猜不到的。所以这个 Agent 的第一步不是让你自己去搜 JD、复制粘贴，而是内置了 Firecrawl 爬取引擎，直接把公司招聘页的岗位介绍爬下来：字节跳动、腾讯、阿里等公司的官方招聘页都支持。有了真实的 JD 之后，Agent 才会进入后续的匹配分析和定向改写——这才是"针对岗位优化简历"该有的样子，而不是对着一个模模糊糊的岗位名字瞎改。
@@ -95,7 +99,7 @@ Python 实现 · 兼容所有 OpenAI-compatible API · 本地运行 · 你的数
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/your-org/OpenResume.git
+git clone https://github.com/tumbledseea/open-resume.git
 cd OpenResume
 
 # 2. 安装 Python 依赖
@@ -113,6 +117,14 @@ BASE_URL = https://api.siliconflow.cn/v1  # 或 https://api.openai.com/v1
 MODEL_NAME = deepseek-ai/DeepSeek-V4-Flash  # 或 gpt-4o
 FIRECRAWL_API_KEY = fc-xxxxxxxxxxxxx     # 可选：用 Firecrawl 爬取真实招聘页
 ```
+
+本项目只依赖两个外部接口，都在 `.env` 里配置：
+
+**1. LLM API（必填）— 大模型推理。** 兼容所有 OpenAI-compatible 接口，本项目默认用 [硅基流动 SiliconFlow](https://cloud.siliconflow.cn/me/models)，它聚合了 DeepSeek、Qwen、GLM 等国产大模型，注册送额度、价格便宜、国内访问快，适合个人开发者。也可以直接换成 OpenAI（`BASE_URL=https://api.openai.com/v1`、`MODEL_NAME=gpt-4o`）或任何自建的 OpenAI 兼容端点。Agent 的结构化抽取、JD 分析、内容生成、语义匹配全靠它。
+
+**2. Firecrawl API（可选）— 招聘页爬取。** [Firecrawl](https://www.firecrawl.dev/) 是一个专门把网页转成干净 markdown / 结构化数据的爬虫服务。不配置时项目会回退到 DuckDuckGo 搜索 + urllib，但能力受限。
+
+> **为什么本项目选 Firecrawl：** 招聘网站（字节跳动、腾讯、阿里等）的岗位详情几乎都是 **JavaScript 动态渲染**的——用普通 `requests` 抓回来只有空壳 HTML，拿不到真正的 JD 正文。Firecrawl 自带无头浏览器，支持 `waitFor` 等待 JS 渲染完成，能直接拿到渲染后的完整内容；它还内置反爬绕过和自动 markdown 清洗，省去自己维护浏览器、cookie、解析逻辑的麻烦。对本项目而言，**"拿到真实、完整的 JD"是整条 pipeline 的依据**
 
 ### 可选依赖
 
@@ -192,22 +204,58 @@ projects/pipeline_20260614_120000/
 
 ---
 
-## 架构
+## 技术流程
 
-### 四层 Agent Harness（对标 Claude Code 架构）
+![任务流程](docs/images/task_loop.png)
 
-OpenResume 严格对标 Claude Code 的四层架构，每一层职责清晰、互不耦合。绿色竖线 = 已完成，橙色竖线 = 未完成。
+### 流程原理与过程
+
+整个流程的核心思想是：**简历生成是一道固定工序，工序顺序由代码强制执行，每一步内部才交给大模型填空**。这不是让模型自己决定"先做什么再做什么"，而是把不可跳过的依赖关系写死在 `pipeline.py` 里——没有 profile 就无法分析 JD，没有策略就无法生成内容。13 个阶段按下列顺序逐一执行：
+
+1. **preflight（预检）** — 校验 profile 文件存在、项目目录可写、必要的 API key 已配置。不通过直接中止，避免后面白跑。
+2. **import_profile（导入资料）** — 把用户的 markdown 资料复制进项目工作区，作为唯一事实来源。
+3. **normalize_profile（结构化抽取）** — LLM 把自由文本资料抽成结构化 `profile.json` + `fact_index.json`，后续所有内容只能引用这里的事实，杜绝编造。
+4. **resolve_target_job（确定目标岗位）** — 三种输入归一：直接给的 JD 文本 / 招聘页 URL（Firecrawl 爬取）/ 关键词搜索后选岗。产出统一的 `jd_raw.md`。
+5. **analyze_jd（JD 分析）** — LLM 解析岗位描述，提取硬性技能、关键词、业务背景、HR 筛选要点，写入 `jd_analysis.md`。
+6. **build_resume_strategy（策略生成）** — 综合 profile 和 JD，决定突出哪些经历、弱化哪些、关键词如何映射，产出 `spec_lock.json`。
+7. **generate_resume_modules（内容生成）** — LLM 按策略生成结构化简历内容，同时写出可编辑的 `resume.md` 和供渲染的 `resume_modules.json`。
+8. **render_latex（LaTeX 渲染）** — Jinja2 渲染器把 `resume_modules.json` 转成 `resume.tex`，绝不让模型直接写 LaTeX。
+9. **compile_pdf（编译）** — xelatex 编译出 PDF，强制 1 页 A4 门禁。编译失败时把错误日志喂回模型修复。
+10. **check_truthfulness（真实性检查）** — 逐条比对简历内容与 `fact_index.json`，发现编造的经历/数字/奖项立即标记。
+11. **check_ats（ATS 检查）** — 检查关键词覆盖率、格式是否机器可读。
+12. **match_analysis（匹配度评分）** — 60% 精确关键词 + 40% LLM 语义对齐，给出 0-100 分和分模块缺口报告。
+13. **revise loop（自动修订闭环）** — 匹配分低于阈值时，自动定向改写缺口最大的 section → 重新渲染 → 重新评分，**最多两轮**。仍不达标则如实标记不通过，不强行"刷分"。
+
+全程产出 `pipeline_report.json`，记录每个阶段的状态（ok / skipped / failed / needs_input）、耗时、产出文件和失败原因——用户一眼能看到到哪步成功、哪步垮了、为什么。
+
+---
+
+## 架构 -- Agent Harnes
 
 ![四层 Agent Harness 架构](docs/images/four_layer_architecture.png)
 
-**各层职责**：
+### 架构原理与各层职责
 
-| 层 | 职责 | Claude Code 对应 | OpenResume 实现 |
-|---|---|---|---|
-| **引擎层** | 中枢调度·不含业务逻辑 | QueryEngine · query 循环 · 工具编排 · 对话生命周期 | `query_engine.py` · `query_loop.py` · `pipeline.py` |
-| **工具层** | Agent 全部能力 | 文件操作 · 搜索 · 执行 · 模式控制 · 任务管理 | 30+ 工具 · 12 Provider · 权限过滤 · schema 输出 |
-| **服务层** | 共享基础设施 | API 调用 · 上下文压缩 · 记忆 · MCP 通信 | LLM API · Memory · ⚠️ 缺上下文压缩 · ⚠️ 缺 MCP 动态注入 |
-| **安全与治理层** | 横切关注点 | 权限检查 · Hooks · Bash 安全 | PermissionPolicy · Post-tool Hooks · ⚠️ 缺 Bash 沙箱 |
+上面的技术流程描述了"简历怎么一步步生成"，而这套四层架构回答的是"支撑这套流程的引擎是怎么搭的"。它严格对标 Claude Code 的分层思路，每层职责单一、互不耦合：
+
+**第 1 层 · 引擎层（中枢调度，不含业务逻辑）。** 这是整个 Agent 的心脏，有两套互补的驱动方式：
+- **Query Loop**（对应 Claude Code 的 `query.ts`）—— 交互式对话时的模型-工具循环：模型读上下文 → 决定调哪个工具 → 执行 → 结果回灌 → 继续下一轮，直到给出最终答复，带 `max_turns` 防死循环。这一层模型有完全的决策自由。
+- **Pipeline Orchestrator**（`pipeline.py`）—— 一键生成时的确定性编排：顺序写死，模型只在每个阶段内部填空。引擎层本身不懂"简历"，它只管调度、状态、上下文、trace。
+
+**第 2 层 · 工具层（Agent 的全部能力，30+ 工具 / 12 Provider）。** 所有"能做的事"都封装成统一的 `FunctionTool`：name、description、input_schema、permission、handler。覆盖文件操作、岗位搜索抓取、内容生成、LaTeX 渲染编译、质量检查、版本管理。模型只能通过工具与世界交互，不能直接碰文件系统或网络。
+
+**第 3 层 · 服务层（共享基础设施）。** 跨工具复用的底座：
+- **LLM API** — OpenAI-compatible 客户端，流式调用 + 重试。
+- **上下文压缩** — CJK 感知的 token 估算，长对话时把更早的轮次压成结构化摘要，profile / JD 等关键事实永不被截断（对应 Claude Code 的上下文压缩）。
+- **Memory** — 文件型长期记忆，存用户偏好和历史反馈。
+- **MCP 动态注册** — 把外部 MCP server（如 Firecrawl）的工具自动转成 `FunctionTool` 注入工具层，命名为 `mcp/<server>/<tool>`，受 NETWORK 权限管控。
+
+**第 4 层 · 安全与治理层（横切关注点）。** 不属于任何单层、贯穿所有调用的护栏：
+- **PermissionPolicy** — 每次工具调用前后双重检查：写路径越界拦截、NETWORK 必须显式审批、DELETE 默认拒、敏感写需双重确认。核心原则是"不信任模型，也不信任工具"。
+- **Post-tool Hooks** — 写文件后自动触发质量检查（真实性 / ATS / 匹配度），不依赖模型自觉去调。
+- **Bash 沙箱** — 🚫 本项目不需要：OpenResume 不执行用户的任意 shell 命令，只调固定脚本，权限层的路径边界已足够。
+
+四层之间的关系：**引擎层调工具层 → 工具层调服务层 → 安全治理层横切拦截每一次调用**。这正是 Claude Code "模型有决策权、系统有护栏"哲学在简历领域的落地。
 
 **和 ChatGPT/Claude 直接改简历的区别**：
 

@@ -38,7 +38,7 @@
 }
 
 %% Sidebar header: name + contact in dark panel
-\newcommand{\T6SideHeader}[3]{%
+\newcommand{\SideHeader}[3]{%
   \begin{center}\vspace{3mm}
     \ifblank{#3}{%
       \begin{tikzpicture}
@@ -53,13 +53,13 @@
   \end{center}
 }
 
-\newcommand{\T6SideSection}[1]{%
+\newcommand{\SideSection}[1]{%
   \vspace{1.5mm}
   {\small\bfseries\color{t6accent}\MakeUppercase{#1}}\[-1mm]
   \textcolor{t6accent}{\rule{\linewidth}{0.4pt}}\[0.5mm]
 }
 
-\newcommand{\T6ContactItem}[2]{%
+\newcommand{\ContactItem}[2]{%
   {\small\color{t6muted}#1}\enspace{\small\color{t6white}#2}\[0.5mm]
 }
 
@@ -77,7 +77,7 @@
   before skip=0.1em, after skip=0.25em
 }
 
-\newcommand{\T6SectionTitle}[1]{%
+\newcommand{\SectionTitle}[1]{%
   \vspace{0.18em}
   \noindent{\color{t6accent}\rule{4pt}{11pt}}\hspace{0.4em}%
   {\large\bfseries\color{t6text}#1}\hspace{0.5em}%
@@ -85,15 +85,15 @@
   \vspace{0.1em}
 }
 
-\newcommand{\T6EntryHeader}[2]{%
+\newcommand{\EntryHeader}[2]{%
   \noindent\textbf{\color{t6text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t6accent}#2}}\par
 }
-\newcommand{\T6EntrySubheader}[2]{%
+\newcommand{\EntrySubheader}[2]{%
   \noindent{\small\color{t6muted}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t6muted}#2}}\par
 }
-\newcommand{\T6AwardEntry}[2]{%
+\newcommand{\AwardEntry}[2]{%
   \noindent{\color{t6text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t6muted}#2}}\par\vspace{0.07em}
 }

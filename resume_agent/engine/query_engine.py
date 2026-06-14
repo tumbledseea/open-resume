@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from resume_agent.context.builder import build_context_pack
+from resume_agent.context.compressor import compress_messages
 from resume_agent.engine.intent_router import route_intent
 import json
 
@@ -133,7 +134,7 @@ class ResumeQueryEngine:
             "jd_text": request.jd_text or "",
             "jd_url": request.jd_url or "",
         }
-        return [
+        messages = [
             {
                 "role": "system",
                 "content": (
@@ -184,6 +185,14 @@ class ResumeQueryEngine:
                 ),
             },
         ]
+        # Compress conversation history when it exceeds the token budget.
+        # The system prompt and the current user message (with static context) are
+        # always kept verbatim; older history turns are replaced with a structured
+        # summary when the budget is exceeded.
+        if request.history:
+            compressed = compress_messages(messages, recent_turns=6)
+            return compressed.messages
+        return messages
 
     def _success_message(self, intent: str, changed_files: list[str]) -> str:
         if intent == "generate_resume":

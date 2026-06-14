@@ -63,7 +63,7 @@
 }
 
 %% ── Header (sidebar top) ────────────────────────────────────────────
-\newcommand{\T2SideHeader}[3]{%
+\newcommand{\SideHeader}[3]{%
   \begin{center}
     \vspace{2mm}
     \ifblank{#3}{%
@@ -81,19 +81,19 @@
 }
 
 %% ── Sidebar section title ───────────────────────────────────────────
-\newcommand{\T2SideSection}[1]{%
+\newcommand{\SideSection}[1]{%
   \vspace{1.5mm}
   {\small\bfseries\color{t2accent}\MakeUppercase{#1}}\\[-1mm]
   \textcolor{t2accent}{\rule{\linewidth}{0.4pt}}\\[0.5mm]
 }
 
 %% ── Sidebar contact item ────────────────────────────────────────────
-\newcommand{\T2ContactItem}[2]{%
+\newcommand{\ContactItem}[2]{%
   {\small\color{t2muted}#1}\enspace{\small\color{t2light}#2}\\[0.5mm]
 }
 
 %% ── Main section title ──────────────────────────────────────────────
-\newcommand{\T2SectionTitle}[1]{%
+\newcommand{\SectionTitle}[1]{%
   \vspace{0.15em}
   \noindent
   \begin{minipage}{\linewidth}
@@ -105,13 +105,13 @@
 }
 
 %% ── Entry helpers ───────────────────────────────────────────────────
-\newcommand{\T2EntryHeader}[2]{%
+\newcommand{\EntryHeader}[2]{%
   \noindent\textbf{\color{t2text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t2accent}#2}}%
   \par
 }
 
-\newcommand{\T2EntrySubheader}[2]{%
+\newcommand{\EntrySubheader}[2]{%
   \noindent{\small\color{t2accent}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t2muted}#2}}%
   \par

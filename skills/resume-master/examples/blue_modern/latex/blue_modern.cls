@@ -46,7 +46,7 @@
   \end{tikzpicture}%
 }
 
-\newcommand{\T7Header}[3]{%
+\newcommand{\Header}[3]{%
   \vspace*{0.42cm}
   \noindent
   \begin{minipage}[t]{0.76\textwidth}
@@ -69,7 +69,7 @@
   \vspace{0.12em}
 }
 
-\newcommand{\T7SectionTitle}[1]{%
+\newcommand{\SectionTitle}[1]{%
   \vspace{0.22em}
   \noindent
   \begin{tikzpicture}[baseline=-0.55ex]
@@ -87,7 +87,7 @@
   before skip=0.1em, after skip=0.28em
 }
 
-\newcommand{\T7Badge}[1]{%
+\newcommand{\Badge}[1]{%
   \hspace{0.25em}{\tikz[baseline=-0.45ex]\node[
     fill=t7badge, draw=t7rule, rounded corners=1.5pt,
     inner xsep=3pt, inner ysep=0.8pt,
@@ -95,15 +95,15 @@
   ]{#1};}%
 }
 
-\newcommand{\T7EntryHeader}[2]{%
+\newcommand{\EntryHeader}[2]{%
   \noindent\textbf{\color{t7text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t7accent}#2}}\par
 }
-\newcommand{\T7EntrySubheader}[2]{%
+\newcommand{\EntrySubheader}[2]{%
   \noindent{\small\color{t7muted}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t7muted}#2}}\par
 }
-\newcommand{\T7AwardEntry}[2]{%
+\newcommand{\AwardEntry}[2]{%
   \noindent{\color{t7text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t7muted}#2}}%
   \par\vspace{0.07em}

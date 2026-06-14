@@ -21,12 +21,45 @@ from resume_agent.tools.strategy_tools import create_strategy_tools
 from resume_agent.tools.tool_runtime import default_repo_root
 
 
-def create_builtin_registry(repo_root: Path | str | None = None) -> ToolRegistry:
+def create_builtin_registry(
+    repo_root: Path | str | None = None,
+    *,
+    include_mcp: bool = True,
+) -> ToolRegistry:
+    """Create a ToolRegistry populated with all built-in tools.
+
+    When *include_mcp* is True (the default), tools discovered from
+    configured MCP servers are also registered.  MCP tools are gated behind
+    ``ToolPermission.NETWORK``, so they only appear when the caller passes
+    ``--allow-network``.  A broken or unreachable MCP server is silently
+    skipped — it never blocks the agent from starting.
+    """
     root = Path(repo_root).resolve() if repo_root is not None else default_repo_root()
     registry = ToolRegistry()
     for tool in _builtin_tools(root):
         registry.register(tool)
+
+    if include_mcp:
+        _register_mcp_tools(registry, root)
+
     return registry
+
+
+def _register_mcp_tools(registry: ToolRegistry, repo_root: Path) -> None:
+    try:
+        from resume_agent.mcp.registry import load_mcp_tools
+    except ImportError:
+        return
+    try:
+        mcp_tools = load_mcp_tools(str(repo_root))
+    except Exception:
+        # MCP server failure is non-fatal — agent works fine without them.
+        return
+    for tool in mcp_tools:
+        try:
+            registry.register(tool)
+        except Exception:
+            pass  # duplicate name or other register error — skip
 
 
 def _builtin_tools(repo_root: Path) -> list[FunctionTool]:

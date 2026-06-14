@@ -50,7 +50,7 @@
 
 %% ── Header ──────────────────────────────────────────────────────────
 %% #1 = name  #2 = contact line  #3 = photo (optional)
-\newcommand{\T3Header}[3]{%
+\newcommand{\Header}[3]{%
   \vspace*{0.42cm}
   \noindent
   \begin{minipage}[t]{0.76\textwidth}
@@ -77,7 +77,7 @@
 }
 
 %% ── Section title (left teal block + text + rule) ────────────────────
-\newcommand{\T3SectionTitle}[1]{%
+\newcommand{\SectionTitle}[1]{%
   \vspace{0.22em}
   \noindent
   \begin{tikzpicture}[baseline=-0.55ex]
@@ -97,7 +97,7 @@
 }
 
 %% ── Badge ────────────────────────────────────────────────────────────
-\newcommand{\T3Badge}[1]{%
+\newcommand{\Badge}[1]{%
   \hspace{0.25em}{\tikz[baseline=-0.45ex]\node[
     fill=t3badge, draw=t3rule,
     rounded corners=1.5pt,
@@ -107,19 +107,19 @@
 }
 
 %% ── Entry helpers ────────────────────────────────────────────────────
-\newcommand{\T3EntryHeader}[2]{%
+\newcommand{\EntryHeader}[2]{%
   \noindent\textbf{\color{t3text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t3accent}#2}}%
   \par
 }
 
-\newcommand{\T3EntrySubheader}[2]{%
+\newcommand{\EntrySubheader}[2]{%
   \noindent{\small\color{t3muted}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t3muted}#2}}%
   \par
 }
 
-\newcommand{\T3AwardEntry}[2]{%
+\newcommand{\AwardEntry}[2]{%
   \noindent{\color{t3text}#1}%
   \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{t3muted}#2}}%
   \par\vspace{0.07em}
