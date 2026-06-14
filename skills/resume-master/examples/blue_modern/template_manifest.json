@@ -1,0 +1,18 @@
+{
+  "template_id": "blue_modern",
+  "name": "蓝灰现代单栏中文简历",
+  "description": "蓝灰色系顶部横条，左侧竖线节标题，白色卡片，通用技术岗位简洁风格。",
+  "source_pdf": "examples/template7.pdf",
+  "renderer": "../../scripts/renderers/render_blue_modern.py",
+  "document_class": "latex/blue_modern.cls",
+  "entrypoint_template": "latex/main.tex.j2",
+  "page": { "size": "a4", "orientation": "portrait" },
+  "required_modules": ["education", "experience", "projects", "awards"],
+  "optional_modules": ["summary", "skills", "certifications"],
+  "module_slots": {
+    "education": "School, badges, degree, major, time, location, details.",
+    "experience": "Organization, role, time, project, labeled bullets.",
+    "projects": "Project name, role, time, bullets.",
+    "awards": "Award name + time right-aligned."
+  }
+}

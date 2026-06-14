@@ -1,0 +1,15 @@
+${CMD}SectionTitle{ {{ module.title }} }
+\begin{T7Card}
+{% for item in module["items"] %}
+${CMD}EntryHeader{ {{ item.school }}{% for badge in item.badges %}${CMD}Badge{ {{ badge }} }{% endfor %} }{ {{ item.time }} }
+${CMD}EntrySubheader{ {{ item.major }} \quad {{ item.degree }}{% if item.college %} \quad {{ item.college }}{% endif %}{% if item.study_type %} \quad {{ item.study_type }}{% endif %} }{ {{ item.location | default("") }} }
+{% if item.details %}
+\begin{itemize}
+{% for detail in item.details %}
+  \item {{ detail }}
+{% endfor %}
+\end{itemize}
+{% endif %}
+{% if not loop.last %}\vspace{0.18em}{% endif %}
+{% endfor %}
+\end{T7Card}

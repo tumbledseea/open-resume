@@ -1,0 +1,7 @@
+pytest>=8.0
+openai
+jinja2
+jsonschema
+markdown
+fastapi
+uvicorn

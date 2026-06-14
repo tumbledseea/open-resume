@@ -1,0 +1,6 @@
+\T3SectionTitle{ {{ module.title }} }
+\begin{T3Card}
+{% for item in module["items"] %}
+\T3AwardEntry{ {{ item.name }} }{ {{ item.time }} }
+{% endfor %}
+\end{T3Card}

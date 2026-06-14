@@ -1,0 +1,18 @@
+{
+  "template_id": "orange_warm",
+  "name": "橙色暖色单栏中文简历",
+  "description": "橙色暖色调顶部横条，左侧竖线节标题，白色卡片，适合产品/运营/设计岗位。",
+  "source_pdf": "examples/template5.pdf",
+  "renderer": "../../scripts/renderers/render_orange_warm.py",
+  "document_class": "latex/orange_warm.cls",
+  "entrypoint_template": "latex/main.tex.j2",
+  "page": { "size": "a4", "orientation": "portrait" },
+  "required_modules": ["education", "experience", "projects", "awards"],
+  "optional_modules": ["summary", "skills", "certifications"],
+  "module_slots": {
+    "education": "School, badges, degree, major, time, location, details.",
+    "experience": "Organization, role, time, project, labeled bullets.",
+    "projects": "Project name, role, time, bullets.",
+    "awards": "Award name + time right-aligned."
+  }
+}

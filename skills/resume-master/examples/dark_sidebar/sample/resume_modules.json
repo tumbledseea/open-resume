@@ -1,0 +1,93 @@
+{
+  "template_id": "dark_sidebar",
+  "language": "zh-CN",
+  "header": {
+    "name": "张京斌",
+    "phone": "138-0000-0000",
+    "email": "zhangjingbin@example.com",
+    "location": "上海",
+    "website": "github.com/openresume"
+  },
+  "modules": [
+    {
+      "module_id": "education",
+      "title": "教育经历",
+      "items": [
+        {
+          "school": "华东师范大学",
+          "badges": ["985", "211"],
+          "degree": "硕士",
+          "major": "大数据技术与工程",
+          "college": "数据科学与工程学院",
+          "study_type": "全日制",
+          "time": "2025.09 - 2028.07",
+          "location": "上海",
+          "details": [
+            "研究方向：大模型幻觉检测及缓解、RAG 检索增强生成、AI Agent 工具调用。"
+          ]
+        }
+      ]
+    },
+    {
+      "module_id": "experience",
+      "title": "实习/工作经历",
+      "items": [
+        {
+          "organization": "三峡集团",
+          "role": "大模型应用实习生",
+          "time": "2025.04 - 2025.10",
+          "project": "项目可研报告自动生成与幻觉缓解",
+          "bullets": [
+            {
+              "label": "背景",
+              "text": "面向工程可研报告编写流程，梳理资料检索、章节生成和人工校审节点。"
+            },
+            {
+              "label": "方案",
+              "text": "基于 Python、RAG 和多 Agent 协作设计资料召回、证据引用与内容生成链路。"
+            },
+            {
+              "label": "结果",
+              "text": "沉淀可复用的提示词模板和事实校验流程，降低报告初稿整理成本。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "module_id": "projects",
+      "title": "项目经历",
+      "items": [
+        {
+          "name": "OpenResume 智能简历生成系统",
+          "role": "Agent 后端开发",
+          "time": "2026.01 - 2026.03",
+          "bullets": [
+            "设计 profile.json、fact_index.json 和 resume_modules.json 的结构化 artifact 合同。",
+            "实现 LLM 工具循环、Jinja2 LaTeX 渲染器和 ATS 关键词检查流程。"
+          ]
+        }
+      ]
+    },
+    {
+      "module_id": "awards",
+      "title": "荣誉奖项/证书",
+      "items": [
+        {
+          "name": "APMCM 亚太杯数学建模竞赛三等奖",
+          "time": "2025.03"
+        },
+        {
+          "name": "大学生创新创业训练计划校级立项",
+          "time": "2024.11"
+        }
+      ]
+    }
+  ],
+  "quality_constraints": {
+    "page_limit": 1,
+    "max_experience_bullets": 3,
+    "max_project_bullets": 3,
+    "max_awards": 5
+  }
+}

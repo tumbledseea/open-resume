@@ -1,0 +1,15 @@
+${CMD}SectionTitle{ {{ module.title }} }
+\begin{T7Card}
+{% for item in module["items"] %}
+${CMD}EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
+{% if item.role %}${CMD}EntrySubheader{ {{ item.role }} }{}{% endif %}
+{% if item.bullets %}
+\begin{itemize}
+{% for bullet in item.bullets %}
+  \item {% if bullet is string %}{{ bullet }}{% elif bullet.label %}\textbf{ {{ bullet.label }}：}{{ bullet.text }}{% else %}{{ bullet.text }}{% endif %}
+{% endfor %}
+\end{itemize}
+{% endif %}
+{% if not loop.last %}\vspace{0.18em}{% endif %}
+{% endfor %}
+\end{T7Card}

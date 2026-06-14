@@ -1,0 +1,62 @@
+\documentclass{dark_sidebar}
+\begin{document}
+\columnratio{0.30}
+\begin{paracol}{2}
+\begin{leftcolumn}
+\begin{T6SideBox}
+\color{white}
+\T6SideHeader{ {{ header.name }} }{ {{ header.role_line | default("") }} }{ {{ header.photo | default("") }} }
+\T6SideSection{联系方式}
+{% if header.phone %}\T6ContactItem{📞}{ {{ header.phone }} }{% endif %}
+{% if header.email %}\T6ContactItem{✉}{ {{ header.email }} }{% endif %}
+{% if header.location %}\T6ContactItem{📍}{ {{ header.location }} }{% endif %}
+{% if header.website %}\T6ContactItem{🔗}{ {{ header.website }} }{% endif %}
+{% for module in modules if module.module_id == "education" %}
+\vspace{2mm}\T6SideSection{ {{ module.title }} }
+{% for item in module["items"] %}
+{\small\bfseries\color{white}{{ item.school }}}\[0.2mm]
+{\scriptsize\color{t6accent}{{ item.degree }} · {{ item.major }}}\[0.2mm]
+{\scriptsize\color{t6muted}{{ item.time }}}\[1mm]
+{% endfor %}{% endfor %}
+{% for module in modules if module.module_id == "awards" %}
+\vspace{2mm}\T6SideSection{ {{ module.title }} }
+{% for item in module["items"] %}
+{\small\color{white}{{ item.name }}}\[0.3mm]
+{\scriptsize\color{t6muted}{{ item.time }}}\[0.5mm]
+{% endfor %}{% endfor %}
+\end{T6SideBox}
+\end{leftcolumn}
+\begin{rightcolumn}
+\vspace*{3mm}\hspace{3mm}
+\begin{minipage}[t]{0.92\linewidth}
+{% for module_id in module_order %}{% set module = modules_by_id.get(module_id) %}
+{% if module and module_id not in ["education","awards","skills"] %}
+\T6SectionTitle{ {{ module.title }} }
+\begin{T6Card}
+{% if module_id == "experience" %}
+{% for item in module["items"] %}
+\T6EntryHeader{ {{ item.organization }} }{ {{ item.time }} }
+\T6EntrySubheader{ {{ item.role }} }{ {{ item.project | default("") }} }
+{% if item.bullets %}\begin{itemize}
+{% for bullet in item.bullets %}
+  \item {% if bullet.label %}\textbf{ {{ bullet.label }}：}{% endif %}{{ bullet.text }}
+{% endfor %}\end{itemize}{% endif %}
+{% if not loop.last %}\vspace{0.15em}{% endif %}
+{% endfor %}
+{% elif module_id == "projects" %}
+{% for item in module["items"] %}
+\T6EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
+{% if item.role %}\T6EntrySubheader{ {{ item.role }} }{}{% endif %}
+{% if item.bullets %}\begin{itemize}
+{% for bullet in item.bullets %}
+  \item {% if bullet is string %}{{ bullet }}{% elif bullet.label %}\textbf{ {{ bullet.label }}：}{{ bullet.text }}{% else %}{{ bullet.text }}{% endif %}
+{% endfor %}\end{itemize}{% endif %}
+{% if not loop.last %}\vspace{0.15em}{% endif %}
+{% endfor %}
+{% endif %}
+\end{T6Card}
+{% endif %}{% endfor %}
+\end{minipage}
+\end{rightcolumn}
+\end{paracol}
+\end{document}

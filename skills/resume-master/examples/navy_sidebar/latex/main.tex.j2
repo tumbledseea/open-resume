@@ -1,0 +1,98 @@
+\documentclass{navy_sidebar}
+
+\begin{document}
+\columnratio{0.30}
+\begin{paracol}{2}
+
+%% ── LEFT SIDEBAR ────────────────────────────────────────────────────
+\begin{leftcolumn}
+\begin{tcolorbox}[
+  enhanced, colback=t2sidebar, colframe=t2sidebar,
+  boxrule=0pt, arc=0pt, left=4mm, right=4mm, top=0pt, bottom=0pt,
+  height=\textheight, valign=top
+]
+\color{white}
+\T2SideHeader{ {{ header.name }} }{ {{ header.role_line | default("") }} }{ {{ header.photo | default("") }} }
+
+\T2SideSection{联系方式}
+{% if header.phone %}\T2ContactItem{📞}{ {{ header.phone }} }{% endif %}
+{% if header.email %}\T2ContactItem{✉}{ {{ header.email }} }{% endif %}
+{% if header.location %}\T2ContactItem{📍}{ {{ header.location }} }{% endif %}
+{% if header.website %}\T2ContactItem{🔗}{ {{ header.website }} }{% endif %}
+
+{% for module in modules if module.module_id == "skills" %}
+\vspace{2mm}
+\T2SideSection{ {{ module.title }} }
+{% for item in module["items"] %}
+{\small\color{white}{{ item.name | default(item) }}}\\[0.3mm]
+{% endfor %}
+{% endfor %}
+
+{% for module in modules if module.module_id == "education" %}
+\vspace{2mm}
+\T2SideSection{ {{ module.title }} }
+{% for item in module["items"] %}
+{\small\bfseries\color{white}{{ item.school }}}\\[0.2mm]
+{\scriptsize\color{t2muted}{{ item.degree }} · {{ item.major }}}\\[0.2mm]
+{\scriptsize\color{t2muted}{{ item.time }}}\\[1mm]
+{% endfor %}
+{% endfor %}
+
+{% for module in modules if module.module_id == "awards" %}
+\vspace{2mm}
+\T2SideSection{ {{ module.title }} }
+{% for item in module["items"] %}
+{\small\color{white}{{ item.name }}}\\[0.3mm]
+{\scriptsize\color{t2muted}{{ item.time }}}\\[0.5mm]
+{% endfor %}
+{% endfor %}
+
+\end{tcolorbox}
+\end{leftcolumn}
+
+%% ── RIGHT MAIN CONTENT ──────────────────────────────────────────────
+\begin{rightcolumn}
+\vspace*{3mm}
+\hspace{3mm}
+\begin{minipage}[t]{0.92\linewidth}
+
+{% for module_id in module_order %}
+{% set module = modules_by_id.get(module_id) %}
+{% if module and module_id not in ["education", "awards", "skills"] %}
+\T2SectionTitle{ {{ module.title }} }
+\begin{MainCard}
+{% if module_id == "experience" %}
+{% for item in module["items"] %}
+\T2EntryHeader{ {{ item.organization }} }{ {{ item.time }} }
+\T2EntrySubheader{ {{ item.role }} }{ {{ item.project | default("") }} }
+{% if item.bullets %}
+\begin{itemize}
+{% for bullet in item.bullets %}
+  \item {% if bullet.label is defined and bullet.label %}\textbf{ {{ bullet.label }}：}{% endif %}{% if bullet.text is defined %}{{ bullet.text }}{% else %}{{ bullet }}{% endif %}
+{% endfor %}
+\end{itemize}
+{% endif %}
+{% if not loop.last %}\vspace{0.15em}{% endif %}
+{% endfor %}
+{% elif module_id == "projects" %}
+{% for item in module["items"] %}
+\T2EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
+{% if item.role is defined and item.role %}\T2EntrySubheader{ {{ item.role }} }{}{% endif %}
+{% if item.bullets %}
+\begin{itemize}
+{% for bullet in item.bullets %}
+  \item {% if bullet.label is defined and bullet.label %}\textbf{ {{ bullet.label }}：}{% endif %}{% if bullet.text is defined %}{{ bullet.text }}{% else %}{{ bullet }}{% endif %}
+{% endfor %}
+\end{itemize}
+{% endif %}
+{% if not loop.last %}\vspace{0.15em}{% endif %}
+{% endfor %}
+{% endif %}
+\end{MainCard}
+{% endif %}
+{% endfor %}
+
+\end{minipage}
+\end{rightcolumn}
+\end{paracol}
+\end{document}

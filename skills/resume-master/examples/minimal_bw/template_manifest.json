@@ -1,0 +1,18 @@
+{
+  "template_id": "minimal_bw",
+  "name": "极简黑白学术风中文简历",
+  "description": "纯黑白极简风格，章节大写下划线，无背景色，适合学术、金融、咨询岗位。",
+  "source_pdf": "examples/template4.pdf",
+  "renderer": "../../scripts/renderers/render_minimal_bw.py",
+  "document_class": "latex/minimal_bw.cls",
+  "entrypoint_template": "latex/main.tex.j2",
+  "page": { "size": "a4", "orientation": "portrait" },
+  "required_modules": ["education", "experience", "projects", "awards"],
+  "optional_modules": ["summary", "skills", "certifications"],
+  "module_slots": {
+    "education": "School, badges, degree, major, time, location, details.",
+    "experience": "Organization, role, time, project, labeled bullets.",
+    "projects": "Project name, role, time, bullets.",
+    "awards": "Award name + time right-aligned."
+  }
+}
