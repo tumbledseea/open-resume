@@ -1,0 +1,48 @@
+\documentclass{minimal_bw}
+
+\begin{document}
+\T4Header{ {{ header.name }} }{ {{ header.contact_line }} }
+
+{% for module_id in module_order %}
+{% set module = modules_by_id.get(module_id) %}
+{% if module %}
+\T4SectionTitle{ {{ module.title }} }
+{% if module_id == "education" %}
+{% for item in module["items"] %}
+\T4EntryHeader{ {{ item.school }} }{ {{ item.time }} }
+\T4EntrySubheader{ {{ item.major }} · {{ item.degree }}{% if item.college %} · {{ item.college }}{% endif %} }{ {{ item.location | default("") }} }
+{% if item.details %}\begin{itemize}
+{% for d in item.details %}  \item {{ d }}
+{% endfor %}\end{itemize}{% endif %}
+{% if not loop.last %}\vspace{0.14em}{% endif %}
+{% endfor %}
+{% elif module_id == "experience" %}
+{% for item in module["items"] %}
+\T4EntryHeader{ {{ item.organization }} }{ {{ item.time }} }
+\T4EntrySubheader{ {{ item.role }} }{ {{ item.project | default("") }} }
+{% if item.bullets %}\begin{itemize}
+{% for bullet in item.bullets %}
+  \item {% if bullet.label %}\textbf{ {{ bullet.label }}：}{% endif %}{{ bullet.text }}
+{% endfor %}\end{itemize}{% endif %}
+{% if not loop.last %}\vspace{0.14em}{% endif %}
+{% endfor %}
+{% elif module_id == "projects" %}
+{% for item in module["items"] %}
+\T4EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
+{% if item.role %}\T4EntrySubheader{ {{ item.role }} }{}{% endif %}
+{% if item.bullets %}\begin{itemize}
+{% for bullet in item.bullets %}
+  \item {% if bullet is string %}{{ bullet }}{% elif bullet.label %}\textbf{ {{ bullet.label }}：}{{ bullet.text }}{% else %}{{ bullet.text }}{% endif %}
+{% endfor %}\end{itemize}{% endif %}
+{% if not loop.last %}\vspace{0.14em}{% endif %}
+{% endfor %}
+{% elif module_id == "awards" %}
+{% for item in module["items"] %}
+\T4AwardEntry{ {{ item.name }} }{ {{ item.time }} }
+{% endfor %}
+{% endif %}
+{% if not loop.last %}\vspace{0.1em}{% endif %}
+{% endif %}
+{% endfor %}
+
+\end{document}

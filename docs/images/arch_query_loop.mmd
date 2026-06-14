@@ -1,0 +1,27 @@
+sequenceDiagram
+    participant M as Model LLM
+    participant Q as Query Loop
+    participant R as Tool Registry
+    participant P as Permission Policy
+    participant T as Tool Handler
+    participant H as Post-tool Hooks
+
+    Q->>M: messages + tool schemas
+    M-->>Q: text 或 tool_calls[]
+
+    alt 模型返回文本 无tool call
+        Q->>Q: 终止循环 返回final_message
+    else 模型请求 tool call
+        loop 每个 tool_call
+            Q->>R: execute(name, input, context)
+            R->>P: check_before(tool, input)
+            P-->>R: ✓ 或 ✗ 路径越界/NETWORK未审批/DELETE拒
+            R->>T: handler(input, context)
+            T-->>R: ToolResult(content, metadata)
+            R->>P: check_after(tool, input, result)
+            R->>H: run_post_tool_hooks(name, input)
+            H->>R: 自动执行 check_truthfulness / check_ats / match
+            R-->>Q: ToolResult + hook results
+        end
+        Q->>M: assistant message + tool results → 下一轮
+    end

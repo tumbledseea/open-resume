@@ -1,0 +1,6 @@
+${CMD}SectionTitle{ {{ module.title }} }
+\begin{T8Card}
+{% for item in module["items"] %}
+${CMD}AwardEntry{ {{ item.name }} }{ {{ item.time }} }
+{% endfor %}
+\end{T8Card}

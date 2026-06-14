@@ -1,0 +1,22 @@
+{
+  "template_id": "navy_sidebar",
+  "name": "深蓝双栏边栏中文简历",
+  "description": "左侧深蓝边栏（头像/联系/技能/教育），右侧白色内容区，适合技术类岗位。",
+  "source_pdf": "examples/template2.pdf",
+  "renderer": "../../scripts/renderers/render_navy_sidebar.py",
+  "document_class": "latex/navy_sidebar.cls",
+  "entrypoint_template": "latex/main.tex.j2",
+  "page": {
+    "size": "a4",
+    "orientation": "portrait"
+  },
+  "required_modules": ["experience", "projects"],
+  "optional_modules": ["education", "skills", "awards", "summary"],
+  "module_slots": {
+    "education": "Left sidebar: school, degree, major, time.",
+    "experience": "Right main: organization, role, time, bullets.",
+    "projects": "Right main: project name, role, time, bullets.",
+    "awards": "Left sidebar: award name, time.",
+    "skills": "Left sidebar: skill list."
+  }
+}

@@ -1,0 +1,15 @@
+\T3SectionTitle{ {{ module.title }} }
+\begin{T3Card}
+{% for item in module["items"] %}
+\T3EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
+{% if item.role %}\T3EntrySubheader{ {{ item.role }} }{}{% endif %}
+{% if item.bullets %}
+\begin{itemize}
+{% for bullet in item.bullets %}
+  \item {% if bullet is string %}{{ bullet }}{% elif bullet.label %}\textbf{ {{ bullet.label }}：}{{ bullet.text }}{% else %}{{ bullet.text }}{% endif %}
+{% endfor %}
+\end{itemize}
+{% endif %}
+{% if not loop.last %}\vspace{0.18em}{% endif %}
+{% endfor %}
+\end{T3Card}

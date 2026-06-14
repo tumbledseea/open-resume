@@ -1,0 +1,20 @@
+\documentclass{blue_modern}
+
+\begin{document}
+{% include "partials/header.tex.j2" %}
+
+{% for module_id in module_order %}
+{% set module = modules_by_id.get(module_id) %}
+{% if module %}
+{% if module_id == "education" %}
+{% include "partials/education.tex.j2" %}
+{% elif module_id == "experience" %}
+{% include "partials/experience.tex.j2" %}
+{% elif module_id == "projects" %}
+{% include "partials/projects.tex.j2" %}
+{% elif module_id == "awards" %}
+{% include "partials/awards.tex.j2" %}
+{% endif %}
+{% endif %}
+{% endfor %}
+\end{document}

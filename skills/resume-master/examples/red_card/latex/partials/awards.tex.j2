@@ -1,0 +1,6 @@
+\TemplateSectionTitle{ {{ module.title }} }
+\begin{TemplateCard}
+{% for item in module["items"] %}
+\AwardEntry{ {{ item.name }} }{ {{ item.time }} }
+{% endfor %}
+\end{TemplateCard}

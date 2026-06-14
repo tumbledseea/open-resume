@@ -1,0 +1,59 @@
+flowchart TB
+    subgraph Entry["入口层"]
+        CLI["CLI pipeline / chat / generate / compile"]
+        API["FastAPI POST /api/pipeline"]
+    end
+
+    subgraph Engine["Engine 层 — 核心决策引擎"]
+        Router["Intent Router slash命令 + 关键词 → intent"]
+        Pipeline["Pipeline Orchestrator 13阶段确定性编排"]
+        QEngine["Query Engine 会话生命周期 · state · context"]
+        QLoop["Query Loop 模型 ⇄ 工具循环 · max_turns"]
+    end
+
+    subgraph Tools["Tool 层 — 12个Provider · 30+工具"]
+        Profile["profile 导入/结构化"]
+        JD["jd 录入/抓取/分析"]
+        JobHunt["job_hunt 搜索/选择/爬详情"]
+        Strategy["strategy 策略/spec"]
+        Resume["resume 生成modules"]
+        Section["section 增量读写/revise"]
+        Latex["latex 渲染/编译/one-page"]
+        Quality["quality truthfulness/ATS"]
+        Match["match 匹配度/trend"]
+        Artifact["artifact snapshot/diff/rollback"]
+        MemoryT["memory save/recall"]
+        PipelineT["pipeline_tools preflight/resolve"]
+    end
+
+    subgraph Safety["安全护栏层"]
+        Perm["PermissionPolicy 路径越界 · NETWORK审批 · DELETE拒"]
+        Hooks["Post-tool Hooks 生成后自动check_truthfulness 渲染后自动check_ats"]
+        Schema["Schema Validation resume_modules + JD analysis 失败→LLM repair→重试"]
+    end
+
+    subgraph External["外部集成"]
+        LLM["LLM API OpenAI-compatible SiliconFlow/DeepSeek/GPT"]
+        Firecrawl["Firecrawl JS渲染招聘页抓取 关键词搜索"]
+        XeLaTeX["XeLaTeX LaTeX → PDF编译 one-page门禁"]
+    end
+
+    subgraph Output["产物层"]
+        PDF["exports/resume.pdf 严格1页A4"]
+        Reports["checks/ truthfulness/ATS/match/pipeline"]
+        Versions["versions/ snapshot · diff · rollback"]
+    end
+
+    CLI --> Router
+    API --> Router
+    Router --> Pipeline
+    Pipeline --> QEngine
+    QEngine --> QLoop
+    QLoop --> Tools
+    Tools --> Safety
+    Safety --> External
+    LLM --> QLoop
+    Firecrawl --> JD
+    Firecrawl --> JobHunt
+    XeLaTeX --> Latex
+    Pipeline --> Output

@@ -1,0 +1,32 @@
+{
+  "template_id": "red_card",
+  "name": "红色图标卡片式中文单页简历",
+  "description": "A one-page Chinese resume template decomposed from examples/template1/source-preview.png.",
+  "source_pdf": "",
+  "source_preview": "",
+  "schema": "../../schemas/resume_modules.schema.json",
+  "renderer": "../../scripts/renderers/render_red_card.py",
+  "document_class": "latex/red_card.cls",
+  "entrypoint_template": "latex/main.tex.j2",
+  "page": {
+    "size": "a4",
+    "orientation": "portrait"
+  },
+  "required_modules": [
+    "education",
+    "experience",
+    "projects",
+    "awards"
+  ],
+  "optional_modules": [
+    "summary",
+    "skills",
+    "certifications"
+  ],
+  "module_slots": {
+    "education": "Education history card: school, badges, time, program, location, details.",
+    "experience": "Internship/work card: organization, role, time, project, labeled bullets.",
+    "projects": "Project card: project name, optional role/time, bullets.",
+    "awards": "Award/certificate card: award name on the left, time on the right."
+  }
+}

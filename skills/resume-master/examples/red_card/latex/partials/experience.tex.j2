@@ -1,0 +1,15 @@
+\TemplateSectionTitle{ {{ module.title }} }
+\begin{TemplateCard}
+{% for item in module["items"] %}
+\EntryHeader{ {{ item.organization }} }{ {{ item.time }} }
+\EntrySubheader{ {{ item.role }} }{ {{ item.project }} }
+{% if item.bullets %}
+\begin{itemize}
+{% for bullet in item.bullets %}
+  \item {% if bullet.label %}\textbf{ {{ bullet.label }}：}{% endif %}{{ bullet.text }}
+{% endfor %}
+\end{itemize}
+{% endif %}
+{% if not loop.last %}\vspace{0.18em}{% endif %}
+{% endfor %}
+\end{TemplateCard}
