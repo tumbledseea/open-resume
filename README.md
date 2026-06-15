@@ -228,29 +228,6 @@ projects/pipeline_20260614_120000/
 
 ![四层 Agent Harness 架构](docs/images/four_layer_architecture.png)
 
-### 架构原理与各层职责
-
-上面的技术流程描述了"简历怎么一步步生成"，而这套四层架构回答的是"支撑这套流程的引擎是怎么搭的"。它严格对标 Claude Code 的分层思路，每层职责单一、互不耦合：
-
-**第 1 层 · 引擎层（中枢调度，不含业务逻辑）。** 这是整个 Agent 的心脏，有两套互补的驱动方式：
-- **Query Loop**（对应 Claude Code 的 `query.ts`）—— 交互式对话时的模型-工具循环：模型读上下文 → 决定调哪个工具 → 执行 → 结果回灌 → 继续下一轮，直到给出最终答复，带 `max_turns` 防死循环。这一层模型有完全的决策自由。
-- **Pipeline Orchestrator**（`pipeline.py`）—— 一键生成时的确定性编排：顺序写死，模型只在每个阶段内部填空。引擎层本身不懂"简历"，它只管调度、状态、上下文、trace。
-
-**第 2 层 · 工具层（Agent 的全部能力，30+ 工具 / 12 Provider）。** 所有"能做的事"都封装成统一的 `FunctionTool`：name、description、input_schema、permission、handler。覆盖文件操作、岗位搜索抓取、内容生成、LaTeX 渲染编译、质量检查、版本管理。模型只能通过工具与世界交互，不能直接碰文件系统或网络。
-
-**第 3 层 · 服务层（共享基础设施）。** 跨工具复用的底座：
-- **LLM API** — OpenAI-compatible 客户端，流式调用 + 重试。
-- **上下文压缩** — CJK 感知的 token 估算，长对话时把更早的轮次压成结构化摘要，profile / JD 等关键事实永不被截断（对应 Claude Code 的上下文压缩）。
-- **Memory** — 文件型长期记忆，存用户偏好和历史反馈。
-- **MCP 动态注册** — 把外部 MCP server（如 Firecrawl）的工具自动转成 `FunctionTool` 注入工具层，命名为 `mcp/<server>/<tool>`，受 NETWORK 权限管控。
-
-**第 4 层 · 安全与治理层（横切关注点）。** 不属于任何单层、贯穿所有调用的护栏：
-- **PermissionPolicy** — 每次工具调用前后双重检查：写路径越界拦截、NETWORK 必须显式审批、DELETE 默认拒、敏感写需双重确认。核心原则是"不信任模型，也不信任工具"。
-- **Post-tool Hooks** — 写文件后自动触发质量检查（真实性 / ATS / 匹配度），不依赖模型自觉去调。
-- **Bash 沙箱** — 🚫 本项目不需要：OpenResume 不执行用户的任意 shell 命令，只调固定脚本，权限层的路径边界已足够。
-
-四层之间的关系：**引擎层调工具层 → 工具层调服务层 → 安全治理层横切拦截每一次调用**。这正是 Claude Code "模型有决策权、系统有护栏"哲学在简历领域的落地。
-
 **和 ChatGPT/Claude 直接改简历的区别**：
 
 | 维度 | ChatGPT / Claude | OpenResume |
@@ -290,7 +267,9 @@ OpenResume/
 
 ---
 
-## 贡献
+## 欢迎交流
 
-项目还在开发初期，欢迎有兴趣的小伙伴 PR，(^^)
+项目还在开发初期，欢迎有兴趣的小伙伴PR，(^^)
+
+如果觉得这个项目对你有帮助，麻烦点个免费的 star 吧 ⭐
 
