@@ -6,8 +6,21 @@
 
 \LoadClass[10pt,a4paper]{article}
 
-\RequirePackage[top=0.95cm,bottom=0.95cm,left=1.25cm,right=1.25cm]{geometry}
-\RequirePackage{ctex}
+\RequirePackage[top=0.7cm,bottom=0.7cm,left=1.25cm,right=1.25cm]{geometry}
+\RequirePackage[fontset=none]{ctex}
+% Bind bundled Adobe CJK fonts (relative to compile cwd = <project>/latex).
+% Convention: body = Song, bold = Hei, italic = Kai.
+\def\CJKfontdir{../../fonts/zh_CN-Adobe/}
+\setCJKmainfont{AdobeSongStd-Light.otf}[
+  Path=\CJKfontdir,
+  BoldFont=AdobeHeitiStd-Regular.otf,
+  ItalicFont=AdobeKaitiStd-Regular.otf
+]
+\setCJKsansfont{AdobeHeitiStd-Regular.otf}[Path=\CJKfontdir]
+\setCJKmonofont{AdobeKaitiStd-Regular.otf}[Path=\CJKfontdir]
+\newCJKfontfamily\songti{AdobeSongStd-Light.otf}[Path=\CJKfontdir]
+\newCJKfontfamily\heiti{AdobeHeitiStd-Regular.otf}[Path=\CJKfontdir]
+\newCJKfontfamily\kaiti{AdobeKaitiStd-Regular.otf}[Path=\CJKfontdir]
 \RequirePackage{xcolor}
 \RequirePackage{graphicx}
 \RequirePackage{tikz}
@@ -22,6 +35,7 @@
 \definecolor{templateaccent}{HTML}{C7443E}
 \definecolor{templatedark}{HTML}{22272E}
 \definecolor{templatemuted}{HTML}{6B7280}
+\definecolor{templatesub}{HTML}{3A4250}
 \definecolor{templateborder}{HTML}{DCE5EF}
 \definecolor{templaterule}{HTML}{CDD6E1}
 
@@ -54,10 +68,10 @@
   arc=2.2mm,
   left=3mm,
   right=3mm,
-  top=1.7mm,
-  bottom=1.7mm,
-  before skip=0.12em,
-  after skip=0.28em
+  top=1.3mm,
+  bottom=1.3mm,
+  before skip=0.08em,
+  after skip=0.18em
 }
 
 \newcommand{\PhotoPlaceholder}{%
@@ -69,15 +83,17 @@
 }
 
 \newcommand{\TemplateHeader}[3]{%
-  \vspace*{0.22cm}
+  \vspace*{-0.15cm}
   \noindent
   \begin{minipage}[t]{0.78\textwidth}
+    \vspace{0pt}
     {\fontsize{20}{23}\selectfont\bfseries\color{templatedark}#1}\par
     \vspace{0.28em}
-    {\small\color{templatemuted}#2}\par
+    {\fontsize{9.8}{12}\selectfont\color{templatesub}#2}\par
   \end{minipage}%
   \hfill
   \begin{minipage}[t]{0.16\textwidth}
+    \vspace{0pt}
     \raggedleft
     \ifblank{#3}{%
       \PhotoPlaceholder
@@ -89,7 +105,7 @@
 }
 
 \newcommand{\TemplateSectionTitle}[1]{%
-  \vspace{0.18em}
+  \vspace{0.10em}
   \noindent
   \begin{minipage}{\textwidth}
     \begin{tikzpicture}[baseline=-0.58ex]
@@ -99,7 +115,7 @@
     \hspace{0.35em}{\large\bfseries\color{templateaccent}#1}%
     \hspace{0.65em}\textcolor{templaterule}{\rule{0.66\textwidth}{0.45pt}}%
   \end{minipage}\par
-  \vspace{0.12em}
+  \vspace{0.06em}
 }
 
 \newcommand{\Badge}[1]{%
@@ -115,18 +131,32 @@
 
 \newcommand{\EntryHeader}[2]{%
   \noindent\textbf{\color{templatedark}#1}%
-  \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{templatemuted}#2}}%
+  \ifthenelse{\equal{#2}{}}{}{\hfill{\fontsize{9.5}{11.5}\selectfont\bfseries\color{templatesub}#2}}%
   \par
 }
 
 \newcommand{\EntrySubheader}[2]{%
-  \noindent{\small\color{templatemuted}#1}%
-  \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{templatemuted}#2}}%
+  \noindent{\fontsize{9.5}{11.5}\selectfont\color{templatesub}#1}%
+  \ifthenelse{\equal{#2}{}}{}{\hfill{\fontsize{9.5}{11.5}\selectfont\color{templatesub}#2}}%
+  \par
+}
+
+% Highlighted subheader: left field in accent red + bold (for job titles, venues)
+\newcommand{\EntrySubheaderHL}[2]{%
+  \noindent{\fontsize{10}{12}\selectfont\bfseries\color{templateaccent}#1}%
+  \ifthenelse{\equal{#2}{}}{}{\hfill{\fontsize{9.5}{11.5}\selectfont\bfseries\color{templateaccent}#2}}%
+  \par
+}
+
+% Role line: left field dark-gray + bold (job title / project type / major), optional right field (e.g. link)
+\newcommand{\EntryRole}[2]{%
+  \noindent{\fontsize{9.8}{12}\selectfont\bfseries\color{templatesub}#1}%
+  \ifthenelse{\equal{#2}{}}{}{\hfill{\fontsize{9.8}{12}\selectfont\bfseries\color{templatesub}#2}}%
   \par
 }
 
 \newcommand{\AwardEntry}[2]{%
   \noindent #1%
-  \ifthenelse{\equal{#2}{}}{}{\hfill{\small\color{templatemuted}#2}}%
+  \ifthenelse{\equal{#2}{}}{}{\hfill{\fontsize{9.5}{11.5}\selectfont\bfseries\color{templatesub}#2}}%
   \par\vspace{0.08em}
 }

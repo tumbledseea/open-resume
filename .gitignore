@@ -14,8 +14,12 @@ __pycache__/
 *.fls
 *.fdb_latexmk
 
-# Generated output
-projects/
+# Generated output — ignore everything under projects/ EXCEPT the bundled fonts
+# (fonts/ is a hard dependency: .cls templates load CJK fonts from ../../fonts/)
+projects/*
+!projects/fonts/
+projects/_log_*.txt
+projects/_run*.log
 
 # Tests
 tests/
@@ -24,3 +28,21 @@ tests/
 boss-cli/
 claude-code-main/
 MediaCrawler-main/
+
+jobforge.md
+pytest.ini
+fix_templates.py
+PRD.md
+.gitignore
+person/jd.md
+person/mytest_1.md
+person/ToxiTrace.pdf
+person/fed7c6723c431b3162c3a2d2d1dfcf29.png
+skills/resume-master/examples/blue_modern.pdf
+skills/resume-master/examples/dark_sidebar.pdf
+skills/resume-master/examples/minimal_bw.pdf
+skills/resume-master/examples/navy_sidebar.pdf
+skills/resume-master/examples/orange_warm.pdf
+skills/resume-master/examples/purple_tech.pdf
+skills/resume-master/examples/teal_clean.pdf
+中文简历/

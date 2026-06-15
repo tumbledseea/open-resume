@@ -2,7 +2,7 @@
 \begin{TemplateCard}
 {% for item in module["items"] %}
 \EntryHeader{ {{ item.organization }} }{ {{ item.time }} }
-\EntrySubheader{ {{ item.role }} }{ {{ item.project }} }
+\EntryRole{ {{ item.role }} }{ {{ item.project }} }
 {% if item.bullets %}
 \begin{itemize}
 {% for bullet in item.bullets %}

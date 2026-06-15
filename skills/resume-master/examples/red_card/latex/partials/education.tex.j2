@@ -2,7 +2,7 @@
 \begin{TemplateCard}
 {% for item in module["items"] %}
 \EntryHeader{ {{ item.school }}{% for badge in item.badges %}\Badge{ {{ badge }} }{% endfor %} }{ {{ item.time }} }
-\EntrySubheader{ {{ item.major }} \quad {{ item.degree }} \quad {{ item.college }} \quad {{ item.study_type }} }{ {{ item.location }} }
+\EntryRole{ {{ item.major }}{% if item.degree %} \quad {{ item.degree }}{% endif %}{% if item.college %} \quad {{ item.college }}{% endif %}{% if item.study_type %} \quad {{ item.study_type }}{% endif %} }{ {{ item.location }} }
 {% if item.details %}
 \begin{itemize}
 {% for detail in item.details %}

@@ -87,7 +87,9 @@ def _generate_resume_modules(repo_root: Path, context: ToolContext) -> ToolResul
         "  - education: {school, badges[], time, major, degree, college, study_type, location, details[]}\n"
         "  - experience: {organization, time, role, project, bullets[{label, text}]}\n"
         "  - projects: {name, role, time, bullets[字符串]}\n"
+        "  - publications: {name(论文标题), time, venue(发表/收录会议或期刊,如'ACL Findings 2026'), role(署名,如'学生二作'), details[字符串]}\n"
         "  - awards: {name, time}\n"
+        "- 若profile中存在论文/发表成果，必须输出独立的publications模块(module_id='publications', title='论文成果')，置于projects之后、awards之前；若无则省略该模块\n"
         "- quality_constraints: {page_limit: 1, max_experience_bullets: 3, max_project_bullets: 3, max_awards: 5}"
     )
     if keywords:
@@ -222,6 +224,7 @@ def _repair_resume_modules(
         "schema validation errors:\n"
         + "\n".join(f"- {message}" for message in validation_error.messages)
         + "\n\nrequired template1 modules: education, experience, projects, awards"
+        + "\n\noptional module: publications (module_id='publications', title='论文成果'，含 name/time/venue/role/details[])，若候选人有论文则保留"
         + "\n\ncandidate profile:\n"
         + json.dumps(profile, ensure_ascii=False, indent=2)
         + "\n\nJD analysis:\n"

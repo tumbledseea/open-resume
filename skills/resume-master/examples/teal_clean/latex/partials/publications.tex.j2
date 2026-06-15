@@ -1,0 +1,15 @@
+\SectionTitle{ {{ module.title }} }
+\begin{T3Card}
+{% for item in module["items"] %}
+\EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
+{% if item.venue or item.role %}\EntrySubheader{ {{ item.venue | default("") }} }{ {{ item.role | default("") }} }{% endif %}
+{% if item.details %}
+\begin{itemize}
+{% for detail in item.details %}
+  \item {{ detail }}
+{% endfor %}
+\end{itemize}
+{% endif %}
+{% if not loop.last %}\vspace{0.18em}{% endif %}
+{% endfor %}
+\end{T3Card}

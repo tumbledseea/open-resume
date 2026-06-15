@@ -7,7 +7,20 @@
 \LoadClass[10pt,a4paper]{article}
 
 \RequirePackage[top=0cm,bottom=0.85cm,left=1.3cm,right=1.3cm]{geometry}
-\RequirePackage{ctex}
+\RequirePackage[fontset=none]{ctex}
+% Bind bundled Adobe CJK fonts (relative to compile cwd = <project>/latex).
+% Convention: body = Song, bold = Hei, italic = Kai.
+\def\CJKfontdir{../../fonts/zh_CN-Adobe/}
+\setCJKmainfont{AdobeSongStd-Light.otf}[
+  Path=\CJKfontdir,
+  BoldFont=AdobeHeitiStd-Regular.otf,
+  ItalicFont=AdobeKaitiStd-Regular.otf
+]
+\setCJKsansfont{AdobeHeitiStd-Regular.otf}[Path=\CJKfontdir]
+\setCJKmonofont{AdobeKaitiStd-Regular.otf}[Path=\CJKfontdir]
+\newCJKfontfamily\songti{AdobeSongStd-Light.otf}[Path=\CJKfontdir]
+\newCJKfontfamily\heiti{AdobeHeitiStd-Regular.otf}[Path=\CJKfontdir]
+\newCJKfontfamily\kaiti{AdobeKaitiStd-Regular.otf}[Path=\CJKfontdir]
 \RequirePackage{xcolor}
 \RequirePackage{graphicx}
 \RequirePackage{tikz}

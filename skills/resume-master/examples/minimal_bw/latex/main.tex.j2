@@ -36,6 +36,15 @@
 {% endfor %}\end{itemize}{% endif %}
 {% if not loop.last %}\vspace{0.14em}{% endif %}
 {% endfor %}
+{% elif module_id == "publications" %}
+{% for item in module["items"] %}
+\T4EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
+{% if item.venue or item.role %}\T4EntrySubheader{ {{ item.venue | default("") }} }{ {{ item.role | default("") }} }{% endif %}
+{% if item.details %}\begin{itemize}
+{% for d in item.details %}  \item {{ d }}
+{% endfor %}\end{itemize}{% endif %}
+{% if not loop.last %}\vspace{0.14em}{% endif %}
+{% endfor %}
 {% elif module_id == "awards" %}
 {% for item in module["items"] %}
 \T4AwardEntry{ {{ item.name }} }{ {{ item.time }} }

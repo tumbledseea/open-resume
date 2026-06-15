@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import shutil
 import time
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -218,23 +219,35 @@ class ResumePipeline:
             return self._finalize(result, "failed")
 
         # ── inject photo if provided ────────────────────────────────────────
-        if pipeline_input.photo_file:
+        # ── post-process resume_modules.json (photo + education ordering) ──
+        photo_src = Path(pipeline_input.photo_file).resolve() if pipeline_input.photo_file else None
+        if photo_src and photo_src.is_file():
+            modules_path = project_dir / "latex" / "resume_modules.json"
             try:
-                photo_path = Path(pipeline_input.photo_file).resolve()
-                if photo_path.is_file():
-                    latex_dir = project_dir / "latex"
-                    latex_dir.mkdir(parents=True, exist_ok=True)
-                    dst = latex_dir / "photo.png"
-                    shutil.copy2(photo_path, dst)
-                    # Update resume_modules.json with photo filename
-                    modules_path = latex_dir / "resume_modules.json"
-                    modules = json.loads(modules_path.read_text(encoding="utf-8"))
-                    modules.setdefault("header", {})["photo"] = "photo.png"
-                    modules_path.write_text(json.dumps(modules, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-                else:
-                    result.warnings.append(f"photo file not found: {pipeline_input.photo_file}")
+                modules = json.loads(modules_path.read_text(encoding="utf-8"))
+                modules.setdefault("header", {})["photo"] = "photo.png"
+                shutil.copy2(photo_src, (project_dir / "latex" / "photo.png"))
+                modules_path.write_text(json.dumps(modules, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             except Exception as exc:
                 result.warnings.append(f"photo injection failed: {exc}")
+        elif pipeline_input.photo_file:
+            result.warnings.append(f"photo file not found: {pipeline_input.photo_file}")
+
+        # ── reorder education: graduate degrees (985/211/QS100) first ──
+        try:
+            modules_path = project_dir / "latex" / "resume_modules.json"
+            if modules_path.is_file():
+                modules = json.loads(modules_path.read_text(encoding="utf-8"))
+                for m in modules.get("modules", []):
+                    if isinstance(m, dict) and m.get("module_id") == "education":
+                        items = m.get("items", [])
+                        if len(items) >= 2:
+                            ranked = _education_rank(items)
+                            items.sort(key=ranked)
+                        break
+                modules_path.write_text(json.dumps(modules, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        except Exception:
+            pass  # non-fatal: default ordering is still valid
 
         # ── Phase 7: render_latex ───────────────────────────────────────────
         render_input: dict[str, Any] = {"project_dir": str(project_dir)}
@@ -394,3 +407,65 @@ class ResumePipeline:
         # We keep a reference on self after run() sets it
         if hasattr(self, "_project_dir"):
             self._write_pipeline_report(Path(self._project_dir), result)
+
+
+# ── education ordering helper ──────────────────────────────────────────
+
+# Schools whose name or badges indicate a highly-ranked institution.
+# Detection chain: exact substring match against school name → check item badges.
+_PRESTIGE_SCHOOLS = ("985", "211", "双一流", "C9", "九校联盟", "常春藤", "Ivy League",
+                      "清华", "北大", "浙大", "复旦", "上交", "南大", "中科大", "国科大",
+                      "华东师范", "北京师范", "南开", "天津大学", "华中科技", "武大", "中山", "哈工大",
+                      "西安交大", "同济", "北航", "中国人民", "北师大", "东南", "厦门",
+                      "Harvard", "MIT", "Stanford", "Oxford", "Cambridge", "ETH", "NUS",
+                      "NTU", "Tokyo", "Caltech", "Berkeley", "CMU", "Yale", "Princeton",
+                      "Columbia", "UCLA", "Imperial", "Toronto", "McGill", "EPFL")
+
+_QSTOP100_HINTS = ("QS", "qs", "Qs前", "世界排名", "Top 1", "top 1")
+
+
+def _education_rank(items: list[dict]) -> Callable[[dict], int]:
+    """Return a sort key function that puts graduate degrees from prestigious
+    schools first.  Lower rank = shown higher on the resume.
+
+    Priority order:
+      0 — graduate degree (硕士/博士/Master/PhD) from a 985/211/QS100 school
+      1 — graduate degree from any school
+      2 — undergraduate degree (本科/Bachelor) or other
+      3 — everything else
+    """
+    def rank(item: dict) -> int:
+        school = str(item.get("school", "") or "")
+        badges = [str(b).strip() for b in (item.get("badges", []) or [])]
+        degree = str(item.get("degree", "") or "")
+        combined = school + " " + " ".join(badges)
+
+        is_grad = any(w in degree for w in ("硕士", "博士", "研究生", "Master", "PhD", "Ph.D"))
+        is_ug = any(w in degree for w in ("本科", "学士", "Bachelor"))
+
+        prestigious = False
+        # 1. explicit badges ("985", "211", "双一流")
+        if any(b in badges for b in ("985", "211", "双一流")):
+            prestigious = True
+        # 2. school name substring match
+        if not prestigious:
+            for kw in _PRESTIGE_SCHOOLS:
+                if kw in combined:
+                    prestigious = True
+                    break
+        # 3. QS top-100 hints
+        if not prestigious:
+            for hint in _QSTOP100_HINTS:
+                if hint in combined:
+                    prestigious = True
+                    break
+
+        if is_grad and prestigious:
+            return 0
+        if is_grad:
+            return 1
+        if is_ug:
+            return 2
+        return 3
+
+    return rank

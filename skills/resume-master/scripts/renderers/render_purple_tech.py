@@ -21,8 +21,8 @@ TEMPLATE_ROOT = SKILL_ROOT / "examples" / "purple_tech"
 LATEX_ROOT = TEMPLATE_ROOT / "latex"
 SCHEMA_PATH = SKILL_ROOT / "schemas" / "resume_modules.schema.json"
 CLASS_PATH = LATEX_ROOT / "purple_tech.cls"
-MODULE_ORDER = ["education", "experience", "projects", "awards"]
-REQUIRED_MODULES = set(MODULE_ORDER)
+MODULE_ORDER = ["education", "experience", "projects", "publications", "awards"]
+REQUIRED_MODULES = {"education", "experience", "projects", "awards"}  # publications optional
 
 LATEX_ESCAPE_MAP = {
     "\\": r"\textbackslash{}",
@@ -111,6 +111,12 @@ def normalize_modules(data: dict[str, Any]) -> dict[str, Any]:
             item.setdefault("details", [])
             item.setdefault("bullets", [])
             item["bullets"] = normalize_bullets(item.get("bullets"))
+            # Compat: some generators emit start/end instead of a single time field.
+            if not item.get("time"):
+                start = str(item.get("start", "") or "").strip()
+                end = str(item.get("end", "") or "").strip()
+                if start or end:
+                    item["time"] = f"{start} - {end}" if start and end else (start or end)
             for field in (
                 "school",
                 "time",

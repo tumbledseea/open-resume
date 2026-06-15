@@ -87,6 +87,19 @@
 {% endif %}
 {% if not loop.last %}\vspace{0.15em}{% endif %}
 {% endfor %}
+{% elif module_id == "publications" %}
+{% for item in module["items"] %}
+\T2EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
+{% if item.venue is defined and item.venue or item.role is defined and item.role %}\T2EntrySubheader{ {{ item.venue | default("") }} }{ {{ item.role | default("") }} }{% endif %}
+{% if item.details %}
+\begin{itemize}
+{% for d in item.details %}
+  \item {{ d }}
+{% endfor %}
+\end{itemize}
+{% endif %}
+{% if not loop.last %}\vspace{0.15em}{% endif %}
+{% endfor %}
 {% endif %}
 \end{MainCard}
 {% endif %}

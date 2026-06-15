@@ -53,6 +53,15 @@
 {% endfor %}\end{itemize}{% endif %}
 {% if not loop.last %}\vspace{0.15em}{% endif %}
 {% endfor %}
+{% elif module_id == "publications" %}
+{% for item in module["items"] %}
+\T6EntryHeader{ {{ item.name }} }{ {{ item.time | default("") }} }
+{% if item.venue or item.role %}\T6EntrySubheader{ {{ item.venue | default("") }} }{ {{ item.role | default("") }} }{% endif %}
+{% if item.details %}\begin{itemize}
+{% for d in item.details %}  \item {{ d }}
+{% endfor %}\end{itemize}{% endif %}
+{% if not loop.last %}\vspace{0.15em}{% endif %}
+{% endfor %}
 {% endif %}
 \end{T6Card}
 {% endif %}{% endfor %}
